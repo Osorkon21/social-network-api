@@ -12,7 +12,7 @@ const userSchema = new Schema(
       unique: true,
 
       // sets error message to return if username is null
-      required: [true, "no User username supplied at {PATH}"],
+      required: [true, "No User username supplied at {PATH}"],
 
       trim: true
     },
@@ -20,7 +20,7 @@ const userSchema = new Schema(
       type: String,
 
       // sets error message to return if email is null
-      required: [true, "no User email supplied at {PATH}"],
+      required: [true, "No User email supplied at {PATH}"],
 
       unique: true,
       validate: {
