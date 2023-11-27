@@ -49,12 +49,13 @@ const userSchema = new Schema(
       }
     ]
   },
-  // {
-  //   // when sending anything as JSON, include the virtuals
-  //   toJSON: {
-  //     virtuals: true,
-  //   },
-  // }
+  {
+    // when sending anything as JSON, include the virtuals
+    toJSON: {
+      virtuals: true,
+    },
+    id: false
+  }
 );
 
 // Create a virtual property `friendCount` that gets the amount of friends User has
