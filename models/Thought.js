@@ -17,16 +17,16 @@ const reactionSchema = new Schema(
       type: String,
 
       // sets error message to return if reactionBody is null
-      required: [true, "No Reaction reactionBody supplied at {PATH}"],
+      required: [true, "No reactionBody supplied"],
 
       // sets error message to return if reactionBody is longer than 280 characters
-      maxLength: [280, "Reaction reactionBody supplied at {PATH} contained more than 280 characters."]
+      maxLength: [280, "reactionBody supplied contained more than 280 characters."]
     },
     username: {
       type: String,
 
       // sets error message to return if username is null
-      required: [true, "No Reaction username supplied at {PATH}"]
+      required: [true, "No username supplied"]
     },
     createdAt: {
       type: Date,
@@ -45,13 +45,13 @@ const thoughtSchema = new Schema(
       type: String,
 
       // sets error message to return if thoughtText is null
-      required: [true, "No Thought thoughtText supplied at {PATH}"],
+      required: [true, "No thoughtText supplied"],
 
       // sets error message to return if thoughtText is an empty string
-      minLength: [1, "Thought thoughtText supplied at {PATH} was an empty string."],
+      minLength: [1, "thoughtText supplied was an empty string."],
 
       // sets error message to return if thoughtText is longer than 280 characters
-      maxLength: [280, "Thought thoughtText supplied at {PATH} contained more than 280 characters."]
+      maxLength: [280, "thoughtText supplied contained more than 280 characters."]
     },
     createdAt: {
       type: Date,
@@ -64,16 +64,19 @@ const thoughtSchema = new Schema(
       type: String,
 
       // sets error message to return if username is null
-      required: [true, "No Thought username supplied at {PATH}"],
+      required: [true, "No username supplied"],
     },
     reactions: [reactionSchema]
   },
   {
     // when sending anything as JSON, include the getters and virtuals
-    // toJSON: {
-    //   getters: true,
-    //   virtuals: true,
-    // },
+    toJSON: {
+      getters: true,
+      virtuals: true,
+    },
+
+    // don't include a default getter for the _id property
+    id: false
   }
 );
 

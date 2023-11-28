@@ -12,7 +12,7 @@ const userSchema = new Schema(
       unique: true,
 
       // sets error message to return if username is null
-      required: [true, "No User username supplied at {PATH}"],
+      required: [true, "No username supplied"],
 
       trim: true
     },
@@ -20,7 +20,7 @@ const userSchema = new Schema(
       type: String,
 
       // sets error message to return if email is null
-      required: [true, "No User email supplied at {PATH}"],
+      required: [true, "No email supplied"],
 
       unique: true,
       validate: {
@@ -31,7 +31,7 @@ const userSchema = new Schema(
         },
 
         // error message returned if validation fails
-        message: "User email {VALUE} supplied at {PATH} was not a valid email address!"
+        message: "{VALUE} is not a valid email address!"
       }
     },
     // references Thought model _id values
@@ -52,8 +52,10 @@ const userSchema = new Schema(
   {
     // when sending anything as JSON, include the virtuals
     toJSON: {
-      virtuals: true,
+      virtuals: true
     },
+
+    // don't include a default getter for the _id property
     id: false
   }
 );
