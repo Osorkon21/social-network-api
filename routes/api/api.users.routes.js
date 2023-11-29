@@ -5,6 +5,8 @@ const { Thought, User } = require("../../models/index");
 router.get("/", async (req, res) => {
   try {
     const result = await User.find()
+
+      // do not include __v field in the query results
       .select("-__v");
 
     res.json({ status: "success", result });
@@ -19,7 +21,11 @@ router.get("/", async (req, res) => {
 router.get("/:userId", async (req, res) => {
   try {
     const result = await User.findOne({ _id: req.params.userId })
+
+      // do not include __v field in the query results
       .select("-__v")
+
+      // add thoughts and friends associated with this User to query results, without their __v fields
       .populate([
         { path: "thoughts", select: "-__v" },
         { path: "friends", select: "-__v" }

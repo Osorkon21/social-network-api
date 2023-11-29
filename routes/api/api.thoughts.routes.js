@@ -5,6 +5,8 @@ const { Thought, User } = require("../../models/index");
 router.get("/", async (req, res) => {
   try {
     const result = await Thought.find()
+
+      // do not include __v field in the query results
       .select("-__v");
 
     res.json({ status: "success", result });
@@ -19,6 +21,8 @@ router.get("/", async (req, res) => {
 router.get("/:thoughtId", async (req, res) => {
   try {
     const result = await Thought.findOne({ _id: req.params.thoughtId })
+
+      // do not include __v field in the query results
       .select("-__v");
 
     res.json({ status: "success", result });
@@ -39,17 +43,14 @@ router.post("/", async (req, res) => {
       }
     );
 
-    // find User who created Thought
     await User.findOneAndUpdate(
       {
+        // find User who created Thought
         _id: req.body.userId
       },
       {
         // push new Thought _id to User's thoughts array
         $push: { thoughts: result._id }
-      },
-      {
-        new: true
       }
     );
 
@@ -97,6 +98,17 @@ router.delete("/:thoughtId", async (req, res) => {
   try {
     const result = await Thought.findByIdAndDelete(req.params.thoughtId);
 
+    // find User who created Thought
+    await User.findOneAndUpdate(
+      {
+        username: result.username
+      },
+      {
+        // remove Thought _id from User's thoughts array
+        $pull: { thoughts: result._id }
+      }
+    );
+
     res.json({ status: "delete successful", result });
   }
   catch (err) {
@@ -118,6 +130,7 @@ router.post("/:thoughtId/reactions", async (req, res) => {
         $push: { reactions: req.body }
       },
       {
+        // "result" is now the Thought after update runs
         new: true
       }
     );
@@ -133,7 +146,7 @@ router.post("/:thoughtId/reactions", async (req, res) => {
   }
 });
 
-// remove reaction from Thought's reactions list
+// remove reaction from Thought
 router.delete("/:thoughtId/reactions/:reactionId", async (req, res) => {
   try {
     const result = await Thought.findOneAndUpdate(
@@ -146,6 +159,7 @@ router.delete("/:thoughtId/reactions/:reactionId", async (req, res) => {
         $pull: { reactions: { reactionId: req.params.reactionId } }
       },
       {
+        // "result" is now the Thought after update runs
         new: true
       }
     );
