@@ -11,7 +11,7 @@ const reactionSchema = new Schema(
   {
     reactionId: {
       type: Schema.Types.ObjectId,
-      default: new Types.ObjectId()
+      default: () => new Types.ObjectId()
     },
     reactionBody: {
       type: String,
@@ -35,6 +35,15 @@ const reactionSchema = new Schema(
       // all createdAt get query results will be formatted by this function first
       get: formatTimeStamp
     }
+  },
+  {
+    // when sending anything as JSON, include the getters
+    toJSON: {
+      getters: true,
+    },
+
+    // don't include a default getter for the _id property
+    id: false
   }
 )
 

@@ -1,11 +1,6 @@
 const router = require('express').Router();
 const { Thought, User } = require("../../models/index");
 
-// POST /:thoughtId/reactions
-
-// DELETE /:thoughtId
-// DELETE /:thoughtId/reactions/:reactionId
-
 // get all Thoughts
 router.get("/", async (req, res) => {
   try {
@@ -79,9 +74,11 @@ router.put("/:thoughtId", async (req, res) => {
       },
 
       // update found Thought with incoming info
-      req.body,
+      {
+        thoughtText: req.body.thoughtText
+      },
 
-      // "result" is now the User after update runs
+      // "result" is now the Thought after update runs
       {
         new: true
       }
@@ -95,14 +92,10 @@ router.put("/:thoughtId", async (req, res) => {
   }
 });
 
-// delete existing User
-router.delete("/:userId", async (req, res) => {
+// delete existing Thought
+router.delete("/:thoughtId", async (req, res) => {
   try {
-    const result = await User.findByIdAndDelete(req.params.userId);
-
-    // delete User's Thoughts when User deleted
-    for (var i = 0; i < result.thoughts.length; i++)
-      await Thought.findByIdAndDelete(result.thoughts[i]);
+    const result = await Thought.findByIdAndDelete(req.params.thoughtId);
 
     res.json({ status: "delete successful", result });
   }
@@ -112,22 +105,25 @@ router.delete("/:userId", async (req, res) => {
   }
 });
 
-// add friend to User's friends list
-router.post("/:userId/friends/:friendId", async (req, res) => {
+// add reaction to Thought
+router.post("/:thoughtId/reactions", async (req, res) => {
   try {
-    const result = await User.findOneAndUpdate(
+    const result = await Thought.findOneAndUpdate(
       {
-        // find User
-        _id: req.params.userId
+        // find Thought
+        _id: req.params.thoughtId
       },
       {
-        // add new friend to User's friends array
-        $push: { friends: req.params.friendId }
+        // add new reaction to Thought's reactions array
+        $push: { reactions: req.body }
       },
       {
         new: true
       }
     );
+
+    // verifies req.body is a valid reaction
+    await result.save();
 
     res.json({ status: "success", result });
   }
@@ -137,17 +133,17 @@ router.post("/:userId/friends/:friendId", async (req, res) => {
   }
 });
 
-// remove friend from User's friends list
-router.delete("/:userId/friends/:friendId", async (req, res) => {
+// remove reaction from Thought's reactions list
+router.delete("/:thoughtId/reactions/:reactionId", async (req, res) => {
   try {
-    const result = await User.findOneAndUpdate(
+    const result = await Thought.findOneAndUpdate(
       {
-        // find User
-        _id: req.params.userId
+        // find Thought
+        _id: req.params.thoughtId
       },
       {
-        // remove friend from User's friends array
-        $pull: { friends: req.params.friendId }
+        // remove reaction from Thought's reactions array
+        $pull: { reactions: { reactionId: req.params.reactionId } }
       },
       {
         new: true
