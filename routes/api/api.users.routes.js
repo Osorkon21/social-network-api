@@ -90,7 +90,7 @@ router.delete("/:userId", async (req, res) => {
     for (var i = 0; i < result.thoughts.length; i++)
       await Thought.findByIdAndDelete(result.thoughts[i]);
 
-    res.json({ status: "delete successful", result });
+    res.json({ status: "User and all thoughts deleted!", result });
   }
   catch (err) {
     console.error(err.message);
